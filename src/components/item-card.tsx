@@ -10,15 +10,34 @@ import {
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 
-type TypeList = {
-  titre: string;
-  status: string;
-  onDelete: () => void;
+type Status = "En cours" | "Terminé" | "Abandonné";
+
+const STATUS_CYCLE: Status[] = ["En cours", "Terminé", "Abandonné"];
+
+const STATUS_COLORS: Record<Status, string> = {
+  "En cours": "#f59e0b",
+  "Terminé": "#22c55e",
+  "Abandonné": "#6b7280",
 };
 
-export function ItemCard({ titre, status, onDelete }: TypeList) {
+type TypeList = {
+  titre: string;
+  status: Status;
+  onDelete: () => void;
+  onStatusChange?: (status: Status) => void;
+};
+
+export function ItemCard({ titre, status, onDelete, onStatusChange }: TypeList) {
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(titre);
+  const [currentStatus, setCurrentStatus] = useState<Status>(status);
+
+  function handleStatusChange() {
+    const nextIndex = (STATUS_CYCLE.indexOf(currentStatus) + 1) % STATUS_CYCLE.length;
+    const nextStatus = STATUS_CYCLE[nextIndex];
+    setCurrentStatus(nextStatus);
+    onStatusChange?.(nextStatus);
+  }
 
   function handleDelete() {
     Alert.alert("Supprimer", "Tu veux vraiment supprimer cet item ?", [
@@ -55,7 +74,12 @@ export function ItemCard({ titre, status, onDelete }: TypeList) {
         <ThemedText type="subtitle">{value}</ThemedText>
       )}
 
-      <ThemedText>Status : {status}</ThemedText>
+      <TouchableOpacity
+        style={[styles.button, { backgroundColor: STATUS_COLORS[currentStatus] }]}
+        onPress={handleStatusChange}
+      >
+        <ThemedText style={styles.deleteText}>{currentStatus}</ThemedText>
+      </TouchableOpacity>
 
       <View style={styles.buttons}>
         <TouchableOpacity
