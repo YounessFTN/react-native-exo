@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, StyleSheet, TextInput } from "react-native";
+import { Button, ScrollView, StyleSheet, TextInput } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ItemCard } from "@/components/item-card";
@@ -44,14 +44,16 @@ export default function HomeScreen() {
           title="Ajouter une tâche"
           accessibilityLabel="Ajouter une nouvelle tâche"
         />
-        {items.map((item) => (
-          <ItemCard
-            key={item.id}
-            titre={item.titre}
-            status={item.status}
-            onDelete={() => handleDelete(item.id)}
-          />
-        ))}
+        <ScrollView>
+          {items.map((item) => (
+            <ItemCard
+              key={item.id}
+              titre={item.titre}
+              status={item.status}
+              onDelete={() => handleDelete(item.id)}
+            />
+          ))}
+        </ScrollView>
       </SafeAreaView>
     </ThemedView>
   );
