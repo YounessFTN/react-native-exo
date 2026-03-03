@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { StyleSheet } from "react-native";
+import { Button, StyleSheet, TextInput } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ItemCard } from "@/components/item-card";
@@ -15,15 +15,35 @@ const ITEMS = [
 
 export default function HomeScreen() {
   const [items, setItems] = useState(ITEMS);
+  const [task, setTask] = useState("");
 
   function handleDelete(id: number) {
     const newItems = items.filter((item) => item.id !== id);
     setItems(newItems);
   }
+  function addTodo(title: string) {
+    const newItem = {
+      id: Date.now(),
+      titre: title,
+      status: "En cours",
+    };
+    setItems([...items, newItem]);
+  }
 
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
+        <TextInput
+          style={styles.input}
+          placeholder="Ajouter une nouvelle tâche"
+          value={task}
+          onChangeText={setTask}
+        />
+        <Button
+          onPress={() => addTodo(task)}
+          title="Ajouter une tâche"
+          accessibilityLabel="Ajouter une nouvelle tâche"
+        />
         {items.map((item) => (
           <ItemCard
             key={item.id}
@@ -42,6 +62,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-start",
     flexDirection: "row",
+    marginTop: Spacing.four * 8,
   },
   safeArea: {
     flex: 1,
@@ -70,5 +91,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.four,
     borderRadius: Spacing.four,
+  },
+  input: {
+    height: 40,
+    borderColor: "gray",
+    borderWidth: 1,
+    borderRadius: Spacing.two,
+    paddingHorizontal: Spacing.two,
+    marginVertical: Spacing.two,
   },
 });
